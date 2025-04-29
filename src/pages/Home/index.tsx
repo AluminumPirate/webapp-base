@@ -1,15 +1,14 @@
 import React from 'react';
-import { Typography, Container, Card, CardContent, CardHeader, Box } from '@mui/material';
+import { Container, Card, CardContent, CardHeader, Box, Typography } from '@mui/material';
+import { PageHeader } from '../../components';
 
 const Home: React.FC = () => {
   return (
     <Container>
-      <Typography variant="h4" gutterBottom sx={{ mb: 3 }}>
-        Home Page
-      </Typography>
+      <PageHeader title="Home" subtitle="Welcome to your application dashboard" />
 
       <Card sx={{ maxWidth: 600 }}>
-        <CardHeader title="Welcome!" />
+        <CardHeader title="Getting Started" />
         <CardContent>
           <Typography variant="body1" gutterBottom>
             This is the main landing page of your application.

@@ -1,132 +1,168 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import {
 Drawer,
 List,
-ListItem,
-ListItemIcon,
+ListItemButton,
 ListItemText,
 Divider,
 IconButton,
 Box,
 Typography,
-useTheme
+useTheme,
+Collapse
 } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import HomeIcon from '@mui/icons-material/Home';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import InfoIcon from '@mui/icons-material/Info';
+import PaletteIcon from '@mui/icons-material/Palette';
+import MenuIcon from '@mui/icons-material/Menu';
+import SidebarItem from './SidebarItem';
 
 interface SidebarProps {
 open: boolean;
 onClose: () => void;
 }
 
+interface NavItem {
+text: string;
+icon: React.ReactElement;
+to: string;
+}
+
+interface NavSection {
+id: string;
+text: string;
+items: NavItem[];
+}
+
+const drawerWidth = 240;
+const collapsedWidth = 60;
+
 const Sidebar: React.FC<SidebarProps> = ({ open, onClose }) => {
 const theme = useTheme();
+
+const [openSections, setOpenSections] = useState<Record<string, boolean>>({ 'main': true, 'other': true });
+
+const handleToggleSection = (sectionId: string) => {
+    setOpenSections(prev => ({ ...prev, [sectionId]: !prev[sectionId] }));
+};
+
+const navigationStructure: NavSection[] = [
+    {
+        id: 'main',
+        text: 'Main Area',
+        items: [
+            { text: 'Home', icon: <HomeIcon />, to: '/' },
+            { text: 'Dashboard', icon: <DashboardIcon />, to: '/dashboard' },
+        ]
+    },
+    {
+        id: 'other',
+        text: 'Other',
+        items: [
+            { text: 'Settings', icon: <SettingsIcon />, to: '/settings' },
+            { text: 'Components', icon: <PaletteIcon />, to: '/components' },
+        ]
+    }
+];
+
+const aboutNavItem = { text: 'About', icon: <InfoIcon />, to: '/about' };
 
 return (
     <Drawer
     sx={{
-        width: 240,
+        width: open ? drawerWidth : collapsedWidth,
         flexShrink: 0,
-        '& .MuiDrawer-paper': {
-        width: 240,
+        whiteSpace: 'nowrap',
         boxSizing: 'border-box',
-        transition: theme.transitions.create(['width', 'margin'], {
+        transition: theme.transitions.create('width', {
+        easing: theme.transitions.easing.sharp,
+        duration: open ? theme.transitions.duration.enteringScreen : theme.transitions.duration.leavingScreen,
+        }),
+        '& .MuiDrawer-paper': {
+        display: 'flex',
+        flexDirection: 'column',
+        width: open ? drawerWidth : collapsedWidth,
+        overflowX: 'hidden',
+        boxSizing: 'border-box',
+        transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
+            duration: open ? theme.transitions.duration.enteringScreen : theme.transitions.duration.leavingScreen,
         }),
         },
     }}
     variant="persistent"
     anchor="left"
-    open={open}
+    open={true}
     >
     <Box sx={{ 
     display: 'flex', 
     alignItems: 'center', 
-    padding: 1, 
-    justifyContent: 'space-between',
+    p: 1, 
+    justifyContent: open ? 'space-between' : 'center',
     backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText
+    color: theme.palette.primary.contrastText,
+    minHeight: '64px',
     }}>
-    <Typography variant="h6" sx={{ ml: 2 }}>
-        Dashboard
-    </Typography>
-    <IconButton onClick={onClose} sx={{ color: 'inherit' }}>
-        <ChevronLeftIcon />
-    </IconButton>
+    {!open && (
+        <IconButton onClick={onClose} sx={{ color: 'inherit' }}>
+        <MenuIcon />
+        </IconButton>
+    )}
+    {open && (
+        <Typography variant="h6" sx={{ flexGrow: 1, ml: 1 }}>
+        Base
+        </Typography>
+    )}
+    {open && (
+        <IconButton onClick={onClose} sx={{ color: 'inherit' }}>
+            <ChevronLeftIcon sx={{ transition: 'transform 0.3s', transform: open ? 'rotate(0deg)' : 'rotate(180deg)' }} />
+        </IconButton>
+    )}
     </Box>
     <Divider />
-    <List>
-    <Link to="/" style={{ textDecoration: 'none', color: 'inherit', display: 'block', width: '100%' }}>
-    <ListItem sx={{ 
-        '&:hover': { 
-        backgroundColor: theme.palette.action.hover 
-        },
-        transition: theme.transitions.create('background-color', {
-        duration: theme.transitions.duration.shorter
-        })
-    }}>
-        <ListItemIcon>
-        <HomeIcon />
-        </ListItemIcon>
-        <ListItemText primary="Home" />
-    </ListItem>
-    </Link>
-    
-    <Link to="/dashboard" style={{ textDecoration: 'none', color: 'inherit', display: 'block', width: '100%' }}>
-    <ListItem sx={{ 
-        '&:hover': { 
-        backgroundColor: theme.palette.action.hover 
-        },
-        transition: theme.transitions.create('background-color', {
-        duration: theme.transitions.duration.shorter
-        })
-    }}>
-        <ListItemIcon>
-        <DashboardIcon />
-        </ListItemIcon>
-        <ListItemText primary="Dashboard" />
-    </ListItem>
-    </Link>
-    
-    <Link to="/settings" style={{ textDecoration: 'none', color: 'inherit', display: 'block', width: '100%' }}>
-    <ListItem sx={{ 
-        '&:hover': { 
-        backgroundColor: theme.palette.action.hover 
-        },
-        transition: theme.transitions.create('background-color', {
-        duration: theme.transitions.duration.shorter
-        })
-    }}>
-        <ListItemIcon>
-        <SettingsIcon />
-        </ListItemIcon>
-        <ListItemText primary="Settings" />
-    </ListItem>
-    </Link>
-    
-    <Link to="/about" style={{ textDecoration: 'none', color: 'inherit', display: 'block', width: '100%' }}>
-    <ListItem sx={{ 
-        '&:hover': { 
-        backgroundColor: theme.palette.action.hover 
-        },
-        transition: theme.transitions.create('background-color', {
-        duration: theme.transitions.duration.shorter
-        })
-    }}>
-        <ListItemIcon>
-        <InfoIcon />
-        </ListItemIcon>
-        <ListItemText primary="About" />
-    </ListItem>
-    </Link>
+    <List sx={{ pt: open ? 1 : 0, flexGrow: 1 }}>
+    {navigationStructure.map((section) => (
+        <React.Fragment key={section.id}>
+        {open && (
+            <ListItemButton onClick={() => handleToggleSection(section.id)} sx={{ minHeight: 48 }}>
+            <ListItemText primary={section.text} sx={{ opacity: open ? 1 : 0 }} />
+            {openSections[section.id] ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+        )}
+        <Collapse in={open ? openSections[section.id] : true} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+            {section.items.map((item) => (
+                <SidebarItem 
+                    key={item.text} 
+                    open={open} 
+                    text={item.text} 
+                    icon={item.icon} 
+                    to={item.to} 
+                />
+            ))}
+            </List>
+        </Collapse>
+        {open && <Divider sx={{ my: 1 }} />}
+        </React.Fragment>
+    ))}
     </List>
-
+    <Box sx={{ mt: 'auto' }}>
     <Divider />
+    <List sx={{ py: 0 }}>
+        <SidebarItem 
+            key={aboutNavItem.text} 
+            open={open} 
+            text={aboutNavItem.text} 
+            icon={aboutNavItem.icon} 
+            to={aboutNavItem.to} 
+        />
+    </List>
+    </Box>
     </Drawer>
 );
 };

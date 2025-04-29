@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import { Box, IconButton } from '@mui/material'
+import { Box, IconButton, useTheme } from '@mui/material'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import ThemeToggle from './components/ThemeToggle'
 import { ThemeProvider } from './theme'
@@ -10,16 +10,18 @@ import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import Settings from './pages/Settings'
 import About from './pages/About'
+import ComponentsPage from './pages/Components'
+
+// Define constants outside component (can be imported from Sidebar if preferred)
+const drawerWidth = 240;
+const collapsedWidth = 60;
 
 function App() {
 const [sidebarOpen, setSidebarOpen] = useState(true)
+const theme = useTheme()
 
-const handleCloseSidebar = () => {
-    setSidebarOpen(false)
-}
-
-const handleOpenSidebar = () => {
-    setSidebarOpen(true)
+const handleToggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen)
 }
 
 return (
@@ -28,24 +30,8 @@ return (
     <Box sx={{ display: 'flex' }}>
     <Sidebar 
     open={sidebarOpen} 
-    onClose={handleCloseSidebar} 
+    onClose={handleToggleSidebar}
     />
-    {!sidebarOpen && (
-        <IconButton
-        color="inherit"
-        aria-label="open sidebar"
-        onClick={handleOpenSidebar}
-        edge="start"
-        sx={{ 
-            position: 'fixed', 
-            top: '1rem', 
-            left: '1rem',
-            zIndex: 1100 
-        }}
-        >
-        <MenuIcon />
-        </IconButton>
-    )}
     <Box
         sx={{
         position: 'fixed',
@@ -56,12 +42,24 @@ return (
     >
         <ThemeToggle />
     </Box>
-    <Box component="main" sx={{ flexGrow: 1, p: 3, ml: sidebarOpen ? '240px' : 0 }}>
+    <Box 
+        component="main" 
+        sx={{
+        flexGrow: 1, 
+        p: 3, 
+        transition: theme.transitions.create('margin', {
+            easing: theme.transitions.easing.sharp,
+            duration: sidebarOpen ? theme.transitions.duration.enteringScreen : theme.transitions.duration.leavingScreen,
+        }),
+        marginLeft: `${sidebarOpen ? drawerWidth : collapsedWidth}px`, 
+        }}
+    >
     <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/about" element={<About />} />
+        <Route path="/components" element={<ComponentsPage />} />
     </Routes>
     </Box>
     </Box>

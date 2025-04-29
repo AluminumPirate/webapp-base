@@ -1,15 +1,16 @@
 import React from 'react';
-import { Typography, Container } from '@mui/material';
+import { Container, Typography } from '@mui/material';
+import { PageHeader } from '../../components';
 
 const Dashboard: React.FC = () => {
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>
-        Dashboard Page
+      <PageHeader title="Dashboard" subtitle="Overview of key metrics" />
+
+      <Typography sx={{ mt: 2 }} color="text.secondary">
+        (Dashboard content, charts, and real stats will go here)
       </Typography>
-      <Typography>
-        Welcome to the Dashboard page content.
-      </Typography>
+      
     </Container>
   );
 };
