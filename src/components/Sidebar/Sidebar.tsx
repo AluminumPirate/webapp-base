@@ -11,7 +11,6 @@ Typography,
 useTheme,
 Collapse
 } from '@mui/material';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import HomeIcon from '@mui/icons-material/Home';
@@ -21,6 +20,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import PaletteIcon from '@mui/icons-material/Palette';
 import MenuIcon from '@mui/icons-material/Menu';
 import SidebarItem from './SidebarItem';
+import { AnimatedIconButton } from '../../components';
 
 interface SidebarProps {
 open: boolean;
@@ -81,7 +81,7 @@ return (
         boxSizing: 'border-box',
         transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
-        duration: open ? theme.transitions.duration.enteringScreen : theme.transitions.duration.leavingScreen,
+        duration: 300,
         }),
         '& .MuiDrawer-paper': {
         display: 'flex',
@@ -91,7 +91,7 @@ return (
         boxSizing: 'border-box',
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
-            duration: open ? theme.transitions.duration.enteringScreen : theme.transitions.duration.leavingScreen,
+            duration: 300,
         }),
         },
     }}
@@ -103,26 +103,22 @@ return (
     display: 'flex', 
     alignItems: 'center', 
     p: 1, 
-    justifyContent: open ? 'space-between' : 'center',
+    justifyContent: 'space-between',
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
     minHeight: '64px',
     }}>
-    {!open && (
-        <IconButton onClick={onClose} sx={{ color: 'inherit' }}>
-        <MenuIcon />
-        </IconButton>
-    )}
     {open && (
         <Typography variant="h6" sx={{ flexGrow: 1, ml: 1 }}>
         Base
         </Typography>
     )}
-    {open && (
-        <IconButton onClick={onClose} sx={{ color: 'inherit' }}>
-            <ChevronLeftIcon sx={{ transition: 'transform 0.3s', transform: open ? 'rotate(0deg)' : 'rotate(180deg)' }} />
-        </IconButton>
-    )}
+    <AnimatedIconButton 
+        isActive={open} 
+        onClick={onClose} 
+        color="inherit"
+        sx={{ mr: open ? 0 : 'auto', ml: open ? 0: 'auto' }}
+    />
     </Box>
     <Divider />
     <List sx={{ pt: open ? 1 : 0, flexGrow: 1 }}>
