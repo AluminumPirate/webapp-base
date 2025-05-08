@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconButton, Box } from '@mui/material';
+import { IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 interface AnimatedIconButtonProps {
@@ -9,21 +9,11 @@ interface AnimatedIconButtonProps {
   [x: string]: any; 
 }
 
-const lineCommonStyles = {
-  position: 'absolute',
-  left: 0,
-  height: '2px',
-  // width: '100%', // Removed to allow individual width control
-  backgroundColor: 'currentColor',
-  borderRadius: '1px',
-  transition: 'transform 0.3s ease-in-out, top 0.3s ease-in-out, bottom 0.3s ease-in-out, opacity 0.3s ease-in-out, width 0.3s ease-in-out',
-};
-
 const StyledButton = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'isActive', // Prevent isActive from reaching the DOM element
 })<{
   isActive: boolean;
-}>(({ theme, isActive }) => ({
+}>(({ isActive }) => ({
   width: '24px', // Size of the icon area
   height: '24px',
   position: 'relative',
@@ -36,32 +26,42 @@ const StyledButton = styled(IconButton, {
     // For a ring effect similar to MUI's default, you might use a box-shadow:
     // boxShadow: `0 0 0 2px ${theme.palette.primary.main}`, 
   },
-  '& .line-middle': {
-    ...lineCommonStyles,
-    top: '50%',
-    transform: 'translateY(-50%)',
-    opacity: 1, // Always visible
-    width: isActive ? '100%' : '100%', // Stays full width, or adjust if needed e.g., '80%' for active
+  // Styles for SVG paths will be defined here or directly on paths
+  '& path': {
+    stroke: 'currentColor',
+    strokeWidth: 2,
+    strokeLinecap: 'round',
+    transition: 'd 0.5s ease-in-out', // Changed to 3 seconds
+    // We might need to add transform transitions later if we use SVG transforms
   },
+  // Removed the d attribute definitions from .line-top, .line-middle, .line-bottom CSS rules
+  // The classNames will still be used for applying keyframe animations later.
   '& .line-top': {
-    ...lineCommonStyles,
-    top: isActive ? '50%' : 'calc(50% - 6px)',
-    width: isActive ? '50%' : '100%',
-    transformOrigin: isActive ? '0 50%' : undefined, // Rotate around left edge when active
-    transform: isActive ? 'translateY(-50%) rotate(45deg)' : 'none', // Upper part of < (/)
-    opacity: 1, // Always visible
+    // d: isActive ? 'path("...")' : 'path("...")', // REMOVED
+  },
+  '& .line-middle': {
+    // d: isActive ? 'path("...")' : 'path("...")', // REMOVED
   },
   '& .line-bottom': {
-    ...lineCommonStyles,
-    top: isActive ? '50%' : 'calc(50% + 4px)',
-    width: isActive ? '50%' : '100%',
-    transformOrigin: isActive ? '0 50%' : undefined, // Rotate around left edge when active
-    transform: isActive ? 'translateY(-50%) rotate(-45deg)' : 'none', // Lower part of < (\)
-    opacity: 1, // Always visible
+    // d: isActive ? 'path("...")' : 'path("...")', // REMOVED
   },
 }));
 
 const AnimatedIconButton: React.FC<AnimatedIconButtonProps> = ({ isActive, onClick, ...rest }) => {
+  // Define path 'd' attributes based on isActive state
+  // These will be applied directly to the path elements for now,
+  // then we'll move to styled system for more complex animations.
+
+  // Hamburger paths
+  const topPathHamburger = "M3 7 L21 7";
+  const middlePathHamburger = "M3 12 L21 12";
+  const bottomPathHamburger = "M3 17 L21 17";
+
+  // Corrected Arrow paths for <----
+  const topPathArrow = "M9 7 L3 12";      // Top segment of '<'
+  const middlePathArrow = "M3 12 L21 12";   // Shaft of the arrow
+  const bottomPathArrow = "M9 17 L3 12";   // Bottom segment of '<'
+
   return (
     <StyledButton 
       isActive={isActive} 
@@ -70,10 +70,16 @@ const AnimatedIconButton: React.FC<AnimatedIconButtonProps> = ({ isActive, onCli
       disableRipple
       {...rest}
     >
-      {/* Use Box elements for lines instead of pseudo-elements for easier styling via sx/styled */}
-      <Box component="span" className="line-top" />
-      <Box component="span" className="line-middle" />
-      <Box component="span" className="line-bottom" />
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* 
+          The 'd' attribute will be set dynamically. 
+          We can't directly use isActive in the 'd' prop of path within styled-components CSS object notation easily for paths.
+          So, we'll set them directly for now, or use className approach.
+        */}
+        <path className="line-top" d={isActive ? topPathArrow : topPathHamburger} />
+        <path className="line-middle" d={isActive ? middlePathArrow : middlePathHamburger} />
+        <path className="line-bottom" d={isActive ? bottomPathArrow : bottomPathHamburger} />
+      </svg>
     </StyledButton>
   );
 };
