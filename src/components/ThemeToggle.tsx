@@ -5,18 +5,61 @@ import {
   MenuItem, 
   Box, 
   Typography, 
-  Tooltip 
+  Tooltip,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Divider
 } from '@mui/material';
 import PaletteIcon from '@mui/icons-material/Palette';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useThemeContext, themeConfigs, type AppThemeMode } from '../theme';
+
+// Theme categories for organization
+const themeCategories = {
+  foundation: {
+    label: 'Foundation',
+    icon: '🏛️',
+    themes: ['light', 'dark'] as AppThemeMode[],
+  },
+  nature: {
+    label: 'Nature & Seasons',
+    icon: '🌿',
+    themes: ['summer', 'ocean', 'desert', 'tropical', 'winter', 'sunset'] as AppThemeMode[],
+  },
+  artistic: {
+    label: 'Artistic & Moods',
+    icon: '🎨',
+    themes: ['pastel', 'chocolate', 'cherry', 'carnival', 'lightPurpleBloom'] as AppThemeMode[],
+  },
+  dramatic: {
+    label: 'Epic & Dramatic',
+    icon: '⚡',
+    themes: ['galactic', 'netflix', 'darkness', 'panther'] as AppThemeMode[],
+  },
+  wildcards: {
+    label: 'Wildcards',
+    icon: '🎲',
+    themes: ['vomit', 'snot'] as AppThemeMode[],
+  },
+};
 
 const ThemeToggle = () => {
   const { mode, setThemeMode } = useThemeContext();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [expandedCategory, setExpandedCategory] = useState<string>('foundation');
   const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+    // Auto-expand the category containing current theme
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const currentCategory = Object.entries(themeCategories).find(([_, category]) =>
+      category.themes.includes(mode)
+    );
+    if (currentCategory) {
+      setExpandedCategory(currentCategory[0]);
+    }
   };
 
   const handleClose = () => {
@@ -26,6 +69,13 @@ const ThemeToggle = () => {
   const handleThemeSelect = (themeName: AppThemeMode) => {
     setThemeMode(themeName);
     handleClose();
+  };
+
+  const handleAccordionChange = (category: string) => (
+      _event: React.SyntheticEvent,
+    isExpanded: boolean
+  ) => {
+    setExpandedCategory(isExpanded ? category : '');
   };
 
   // Extract key colors from each theme palette for visual preview
@@ -77,77 +127,150 @@ const ThemeToggle = () => {
         PaperProps={{
           sx: {
             mt: 1,
-            minWidth: 200,
+            minWidth: 280,
+            maxWidth: 320,
             borderRadius: 2,
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+            maxHeight: '70vh',
+            overflowY: 'auto',
           }
         }}
       >
-        {Object.entries(themeConfigs).map(([themeName, config]) => {
-          const colors = getThemeColors(themeName as AppThemeMode);
-          const isSelected = mode === themeName;
+        <Box sx={{ p: 1 }}>
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              px: 1, 
+              py: 0.5, 
+              fontSize: '1rem',
+              fontWeight: 600,
+              color: 'text.primary'
+            }}
+          >
+            Choose Theme
+          </Typography>
+          <Divider sx={{ my: 1 }} />
           
-          return (
-            <MenuItem
-              key={themeName}
-              onClick={() => handleThemeSelect(themeName as AppThemeMode)}
+          {Object.entries(themeCategories).map(([categoryKey, category]) => (
+            <Accordion
+              key={categoryKey}
+              expanded={expandedCategory === categoryKey}
+              onChange={handleAccordionChange(categoryKey)}
+              elevation={0}
               sx={{
-                px: 2,
-                py: 1.5,
-                borderRadius: 1,
-                mx: 0.5,
-                my: 0.25,
-                backgroundColor: isSelected ? 'action.selected' : 'transparent',
-                '&:hover': {
-                  backgroundColor: isSelected ? 'action.selected' : 'action.hover',
-                },
+                '&:before': { display: 'none' },
+                '&.Mui-expanded': { margin: 0 },
+                backgroundColor: 'transparent',
               }}
             >
-              <Box sx={{ width: '100%' }}>
-                {/* Theme name with icon */}
-                <Box sx={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  mb: 1,
-                  gap: 0.5 
-                }}>
-                  <span style={{ fontSize: '0.875rem' }}>{config.icon}</span>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                sx={{
+                  minHeight: 36,
+                  '&.Mui-expanded': { minHeight: 36 },
+                  '& .MuiAccordionSummary-content': {
+                    margin: '8px 0',
+                    '&.Mui-expanded': { margin: '8px 0' },
+                  },
+                  px: 1,
+                  borderRadius: 1,
+                  '&:hover': { backgroundColor: 'action.hover' },
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <span style={{ fontSize: '1rem' }}>{category.icon}</span>
                   <Typography 
-                    variant="body2" 
+                    variant="subtitle2" 
                     sx={{ 
-                      fontWeight: isSelected ? 600 : 400,
+                      fontWeight: 500,
                       fontSize: '0.875rem'
                     }}
                   >
-                    {config.name}
+                    {category.label}
+                  </Typography>
+                  <Typography 
+                    variant="caption" 
+                    sx={{ 
+                      color: 'text.secondary',
+                      fontSize: '0.75rem'
+                    }}
+                  >
+                    ({category.themes.length})
                   </Typography>
                 </Box>
-                
-                {/* Color palette preview */}
-                <Box sx={{ 
-                  display: 'flex', 
-                  gap: 0.5,
-                  alignItems: 'center'
-                }}>
-                  {colors.map((color, index) => (
-                    <Box
-                      key={index}
+              </AccordionSummary>
+              
+              <AccordionDetails sx={{ px: 1, py: 0 }}>
+                {category.themes.map((themeName) => {
+                  const config = themeConfigs[themeName];
+                  const colors = getThemeColors(themeName);
+                  const isSelected = mode === themeName;
+                  
+                  return (
+                    <MenuItem
+                      key={themeName}
+                      onClick={() => handleThemeSelect(themeName)}
                       sx={{
-                        width: 20,
-                        height: 12,
+                        px: 2,
+                        py: 1,
                         borderRadius: 1,
-                        backgroundColor: color,
-                        border: '1px solid',
-                        borderColor: 'divider',
-                        flexShrink: 0,
+                        mx: 0,
+                        my: 0.25,
+                        backgroundColor: isSelected ? 'action.selected' : 'transparent',
+                        '&:hover': {
+                          backgroundColor: isSelected ? 'action.selected' : 'action.hover',
+                        },
                       }}
-                    />
-                  ))}
-                </Box>
-              </Box>
-            </MenuItem>
-          );
-        })}
+                    >
+                      <Box sx={{ width: '100%' }}>
+                        {/* Theme name with icon */}
+                        <Box sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          mb: 0.75,
+                          gap: 0.75 
+                        }}>
+                          <span style={{ fontSize: '0.875rem' }}>{config.icon}</span>
+                          <Typography 
+                            variant="body2" 
+                            sx={{ 
+                              fontWeight: isSelected ? 600 : 400,
+                              fontSize: '0.8rem'
+                            }}
+                          >
+                            {config.name}
+                          </Typography>
+                        </Box>
+                        
+                        {/* Color palette preview */}
+                        <Box sx={{ 
+                          display: 'flex', 
+                          gap: 0.5,
+                          alignItems: 'center'
+                        }}>
+                          {colors.map((color, index) => (
+                            <Box
+                              key={index}
+                              sx={{
+                                width: 18,
+                                height: 10,
+                                borderRadius: 0.5,
+                                backgroundColor: color,
+                                border: '1px solid',
+                                borderColor: 'divider',
+                                flexShrink: 0,
+                              }}
+                            />
+                          ))}
+                        </Box>
+                      </Box>
+                    </MenuItem>
+                  );
+                })}
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </Box>
       </Menu>
     </>
   );
