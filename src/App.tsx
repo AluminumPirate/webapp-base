@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import { Box, IconButton, useTheme } from '@mui/material'
+import { Box, useTheme } from '@mui/material'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import ThemeToggle from './components/ThemeToggle'
 import { ThemeProvider } from './theme'
-import MenuIcon from '@mui/icons-material/Menu'
 import Sidebar from './components/Sidebar/Sidebar'
 import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
@@ -13,8 +12,8 @@ import About from './pages/About'
 import ComponentsPage from './pages/Components'
 
 // Define constants outside component (can be imported from Sidebar if preferred)
-const drawerWidth = 240;
-const collapsedWidth = 60;
+const drawerWidth = 30;
+const collapsedWidth = 10;
 const SIDEBAR_STORAGE_KEY = 'appSidebarOpen';
 
 function App() {

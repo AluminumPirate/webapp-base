@@ -5,7 +5,6 @@ List,
 ListItemButton,
 ListItemText,
 Divider,
-IconButton,
 Box,
 Typography,
 useTheme,
@@ -18,7 +17,6 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import InfoIcon from '@mui/icons-material/Info';
 import PaletteIcon from '@mui/icons-material/Palette';
-import MenuIcon from '@mui/icons-material/Menu';
 import SidebarItem from './SidebarItem';
 import { AnimatedIconButton } from '../../components';
 
@@ -81,7 +79,7 @@ return (
         boxSizing: 'border-box',
         transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
-        duration: 300,
+        duration: open ? theme.transitions.duration.enteringScreen : theme.transitions.duration.leavingScreen,
         }),
         '& .MuiDrawer-paper': {
         display: 'flex',
@@ -91,7 +89,8 @@ return (
         boxSizing: 'border-box',
         transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
-            duration: 300,
+            duration: open ? theme.transitions.duration.enteringScreen : theme.transitions.duration.leavingScreen,
+
         }),
         },
     }}
