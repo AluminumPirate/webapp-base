@@ -13,7 +13,8 @@ import {
 } from '@mui/material';
 import PaletteIcon from '@mui/icons-material/Palette';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useThemeContext, themeConfigs, type AppThemeMode } from '../theme';
+import { useThemeContext } from '../theme';
+import { themeConfigs, type AppThemeMode } from '../theme/config';
 
 // Theme categories for organization
 const themeCategories = {
