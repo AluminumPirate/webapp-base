@@ -1,59 +1,192 @@
 import { createTheme, ThemeProvider as MuiThemeProvider, Theme, ThemeOptions } from '@mui/material/styles';
-import { CssBaseline, PaletteMode } from '@mui/material';
+import { CssBaseline } from '@mui/material';
 import { ReactNode, useMemo, useState, createContext, useContext, useEffect } from 'react';
-import { lightPalette, darkPalette } from './palette';
+import { 
+  lightPalette, 
+  darkPalette, 
+  summerPalette, 
+  oceanPalette, 
+  desertPalette, 
+  tropicalPalette, 
+  carnivalPalette, 
+  winterPalette, 
+  pastelPalette, 
+  chocolatePalette,
+  galacticPalette,
+  cherryPalette,
+  netflixPalette,
+  sunsetPalette,
+  darknessPalette,
+  pantherPalette,
+  vomitPalette,
+  lightPurpleBloomPalette,
+  snotPalette
+} from './palette';
 import typography from './typography';
 import components from './components';
 import breakpoints from './breakpoints';
 
-// Create context for theme mode toggle
+// Define available theme modes
+export type AppThemeMode = 'light' | 'dark' | 'summer' | 'ocean' | 'desert' | 'tropical' | 'carnival' | 'winter' | 'pastel' | 'chocolate' | 'galactic' | 'cherry' | 'netflix' | 'sunset' | 'darkness' | 'panther' | 'vomit' | 'lightPurpleBloom' | 'snot';
+
+// Theme configurations - easy to extend with new themes
+export const themeConfigs = {
+  light: {
+    palette: lightPalette,
+    name: 'Light',
+    icon: '☀️',
+  },
+  dark: {
+    palette: darkPalette,
+    name: 'Dark',
+    icon: '🌙',
+  },
+  summer: {
+    palette: summerPalette,
+    name: 'Summer',
+    icon: '🌅',
+  },
+  ocean: {
+    palette: oceanPalette,
+    name: 'Ocean',
+    icon: '🌊',
+  },
+  desert: {
+    palette: desertPalette,
+    name: 'Desert',
+    icon: '🏜️',
+  },
+  tropical: {
+    palette: tropicalPalette,
+    name: 'Tropical',
+    icon: '🌴',
+  },
+  carnival: {
+    palette: carnivalPalette,
+    name: 'Carnival',
+    icon: '🎭',
+  },
+  winter: {
+    palette: winterPalette,
+    name: 'Winter',
+    icon: '❄️',
+  },
+  pastel: {
+    palette: pastelPalette,
+    name: 'Pastel',
+    icon: '🎨',
+  },
+  chocolate: {
+    palette: chocolatePalette,
+    name: 'Chocolate',
+    icon: '🍫',
+  },
+  galactic: {
+    palette: galacticPalette,
+    name: 'Galactic',
+    icon: '🌌',
+  },
+  cherry: {
+    palette: cherryPalette,
+    name: 'Cherry',
+    icon: '🌸',
+  },
+  netflix: {
+    palette: netflixPalette,
+    name: 'Netflix',
+    icon: '🎬',
+  },
+  sunset: {
+    palette: sunsetPalette,
+    name: 'Sunset',
+    icon: '🌇',
+  },
+  darkness: {
+    palette: darknessPalette,
+    name: 'Darkness',
+    icon: '⚫',
+  },
+  panther: {
+    palette: pantherPalette,
+    name: 'Panther',
+    icon: '🐾',
+  },
+  vomit: {
+    palette: vomitPalette,
+    name: 'Vomit',
+    icon: '🤢',
+  },
+  lightPurpleBloom: {
+    palette: lightPurpleBloomPalette,
+    name: 'Purple Bloom',
+    icon: '🌺',
+  },
+  snot: {
+    palette: snotPalette,
+    name: 'Snot',
+    icon: '🤧',
+  },
+} as const;
+
+// Get all available theme modes
+export const availableThemes = Object.keys(themeConfigs) as AppThemeMode[];
+
+// Create context for theme management
 interface ThemeContextType {
-mode: PaletteMode;
-toggleColorMode: () => void;
+  mode: AppThemeMode;
+  setThemeMode: (mode: AppThemeMode) => void;
+  availableThemes: AppThemeMode[];
+  cycleTheme: () => void;
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-mode: 'light',
-toggleColorMode: () => {},
+  mode: 'light',
+  setThemeMode: () => {},
+  availableThemes,
+  cycleTheme: () => {},
 });
 
 export const useThemeContext = () => useContext(ThemeContext);
 
 // Create theme function
-export const createAppTheme = (mode: PaletteMode): Theme => {
-const themeOptions: ThemeOptions = {
-    palette: mode === 'light' ? lightPalette : darkPalette,
+export const createAppTheme = (mode: AppThemeMode): Theme => {
+  const config = themeConfigs[mode];
+  
+  const themeOptions: ThemeOptions = {
+    palette: config.palette,
     typography,
     components,
     breakpoints,
     shape: {
-    borderRadius: 8,
+      borderRadius: 8,
     },
     zIndex: {
-    appBar: 1200,
-    drawer: 1100,
+      appBar: 1200,
+      drawer: 1100,
     },
-};
+  };
 
-return createTheme(themeOptions);
+  return createTheme(themeOptions);
 };
 
 // Default theme
 export const defaultTheme = createAppTheme('light');
 
-// Theme provider with toggle functionality
+// Theme provider with multi-theme functionality
 interface ThemeProviderProps {
-children: ReactNode;
+  children: ReactNode;
 }
 
 const THEME_STORAGE_KEY = 'appThemeMode'; // Key for localStorage
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   // Initialize state from localStorage or default to 'light'
-  const [mode, setMode] = useState<PaletteMode>(() => {
+  const [mode, setMode] = useState<AppThemeMode>(() => {
     try {
       const storedMode = window.localStorage.getItem(THEME_STORAGE_KEY);
-      return (storedMode === 'dark' || storedMode === 'light') ? storedMode : 'light';
+      return availableThemes.includes(storedMode as AppThemeMode) 
+        ? (storedMode as AppThemeMode) 
+        : 'light';
     } catch (error) {
       console.error("Error reading theme mode from localStorage", error);
       return 'light';
@@ -69,13 +202,19 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     }
   }, [mode]);
 
-  const colorMode = useMemo(
+  // Cycle through themes (for backward compatibility with toggle behavior)
+  const cycleTheme = () => {
+    const currentIndex = availableThemes.indexOf(mode);
+    const nextIndex = (currentIndex + 1) % availableThemes.length;
+    setMode(availableThemes[nextIndex]);
+  };
+
+  const themeMode = useMemo(
     () => ({
       mode,
-      // Toggle function now implicitly updates localStorage via the useEffect
-      toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
-      },
+      setThemeMode: setMode,
+      availableThemes,
+      cycleTheme,
     }),
     [mode]
   );
@@ -83,7 +222,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const theme = useMemo(() => createAppTheme(mode), [mode]);
 
   return (
-    <ThemeContext.Provider value={colorMode}>
+    <ThemeContext.Provider value={themeMode}>
       <MuiThemeProvider theme={theme}>
         <CssBaseline />
         {children}
