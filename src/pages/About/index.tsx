@@ -3,7 +3,6 @@ import {
   Typography,
   Container,
   Paper,
-  Box,
 } from '@mui/material';
 import {
   PageHeader,

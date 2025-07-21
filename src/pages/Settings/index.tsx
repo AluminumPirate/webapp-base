@@ -4,7 +4,7 @@ import { PageHeader, FeedbackMessage } from '../../components';
 
 const Settings: React.FC = () => {
   const [isError, setIsError] = React.useState(false);
-  const [errorMessage, setErrorMessage] = React.useState('');
+  const [errorMessage] = React.useState('');
 
   return (
     <Container>

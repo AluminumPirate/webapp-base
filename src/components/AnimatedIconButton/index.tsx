@@ -13,7 +13,7 @@ const StyledButton = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'isActive', // Prevent isActive from reaching the DOM element
 })<{
   isActive: boolean;
-}>(({ isActive }) => ({
+}>(() => ({
   width: '24px', // Size of the icon area
   height: '24px',
   position: 'relative',
@@ -23,8 +23,6 @@ const StyledButton = styled(IconButton, {
   },
   '&:focus-visible': {
     outline: '2px auto currentColor', // Or use theme.palette.primary.main or another appropriate color
-    // For a ring effect similar to MUI's default, you might use a box-shadow:
-    // boxShadow: `0 0 0 2px ${theme.palette.primary.main}`, 
   },
   // Styles for SVG paths will be defined here or directly on paths
   '& path': {
@@ -33,17 +31,6 @@ const StyledButton = styled(IconButton, {
     strokeLinecap: 'round',
     transition: 'd 0.5s ease-in-out', // Changed to 3 seconds
     // We might need to add transform transitions later if we use SVG transforms
-  },
-  // Removed the d attribute definitions from .line-top, .line-middle, .line-bottom CSS rules
-  // The classNames will still be used for applying keyframe animations later.
-  '& .line-top': {
-    // d: isActive ? 'path("...")' : 'path("...")', // REMOVED
-  },
-  '& .line-middle': {
-    // d: isActive ? 'path("...")' : 'path("...")', // REMOVED
-  },
-  '& .line-bottom': {
-    // d: isActive ? 'path("...")' : 'path("...")', // REMOVED
   },
 }));
 
@@ -71,11 +58,6 @@ const AnimatedIconButton: React.FC<AnimatedIconButtonProps> = ({ isActive, onCli
       {...rest}
     >
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* 
-          The 'd' attribute will be set dynamically. 
-          We can't directly use isActive in the 'd' prop of path within styled-components CSS object notation easily for paths.
-          So, we'll set them directly for now, or use className approach.
-        */}
         <path className="line-top" d={isActive ? topPathArrow : topPathHamburger} />
         <path className="line-middle" d={isActive ? middlePathArrow : middlePathHamburger} />
         <path className="line-bottom" d={isActive ? bottomPathArrow : bottomPathHamburger} />

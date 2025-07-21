@@ -6,7 +6,6 @@ import {
   DialogTitle,
   IconButton,
   Divider,
-  Box,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { ModalWrapperProps } from './types';

@@ -78,15 +78,27 @@ const ThemeToggle = () => {
     setExpandedCategory(isExpanded ? category : '');
   };
 
+  // Helper function to safely extract color values from palette
+  const getColorValue = (colorOption: unknown, property: 'main' | 'default' = 'main'): string => {
+    if (typeof colorOption === 'string') {
+      return colorOption;
+    }
+    if (colorOption && typeof colorOption === 'object' && property in colorOption) {
+      const value = (colorOption as Record<string, unknown>)[property];
+      return typeof value === 'string' ? value : '';
+    }
+    return '';
+  };
+
   // Extract key colors from each theme palette for visual preview
   const getThemeColors = (themeName: AppThemeMode) => {
     const palette = themeConfigs[themeName].palette;
     return [
-      (palette.primary as any)?.main || '#1976d2',
-      (palette.secondary as any)?.main || '#9c27b0', 
-      (palette.info as any)?.main || '#0288d1',
-      (palette.success as any)?.main || '#2e7d32',
-      (palette.background as any)?.default || '#ffffff',
+      getColorValue(palette.primary) || '#1976d2',
+      getColorValue(palette.secondary) || '#9c27b0', 
+      getColorValue(palette.info) || '#0288d1',
+      getColorValue(palette.success) || '#2e7d32',
+      getColorValue(palette.background, 'default') || '#ffffff',
     ];
   };
 
