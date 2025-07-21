@@ -1,12 +1,10 @@
 import React from 'react';
-import { IconButton } from '@mui/material';
+import { IconButton, IconButtonProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-interface AnimatedIconButtonProps {
+interface AnimatedIconButtonProps extends Omit<IconButtonProps, 'onClick'> {
   isActive: boolean;
   onClick: (event: React.MouseEvent<HTMLElement>) => void;
-  // Allow passing other IconButton props like color, aria-label etc.
-  [x: string]: any; 
 }
 
 const StyledButton = styled(IconButton, {

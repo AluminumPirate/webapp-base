@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Typography, Box, Paper, Divider, Button, Stack, TextField } from '@mui/material';
 import { AlertColor } from '@mui/material/Alert';
+import { SnackbarOrigin } from '@mui/material/Snackbar';
 import {
   PageHeader,
   LoadingIndicator,
@@ -31,7 +32,7 @@ const ComponentsPage: React.FC = () => {
     message: '',
     severity: 'info' as AlertColor,
     title: '',
-    position: { vertical: 'bottom', horizontal: 'left' } as any, // Type assertion needed temporarily if strict
+    position: { vertical: 'bottom', horizontal: 'left' } as SnackbarOrigin,
     autoHideDuration: 6000 as number | null
   });
   const [dialog1Open, setDialog1Open] = React.useState(false);
